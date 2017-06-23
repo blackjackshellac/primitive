@@ -10,14 +10,14 @@ OPTIND=1         # Reset in case getopts has been used previously in the shell.
 NUM_DEF=500
 PRIM_DEF=1 # triangles
 CONVERT_OPTS=${CONVERT_OPTS:="-delay 20 -loop 0"}
-PRIMITIVE_DEBUG=${PRIMITIVE_DEBUG:=""}
+PRIMITIVE_PIC_DEBUG=${PRIMITIVE_PIC_DEBUG:=""}
 
 info() {
 	echo -e $*
 }
 
 debug() {
-	[ -n "$PRIMITIVE_DEBUG" ] && info "Debug: $*"
+	[ -n "$PRIMITIVE_PIC_DEBUG" ] && info "Debug: $*"
 }
 
 warn() {
@@ -70,6 +70,7 @@ cat <<- HELP
       -z  WidthxHeight (eg resize with mogrify - 640x480)
       -x  copy exif with exiftool
       -h  this help
+      -V  viewer
       -v  verbose
       -vv very verbose
 
@@ -80,6 +81,7 @@ cat <<- HELP
       PRIMITIVE_PIC_PRIM   - default value for -m parameter
       PRIMITIVE_PIC_WDIR   - default value for -d parameter
       PRIMITIVE_PIC_VIEWER - default value for image viewer application
+      PRIMITIVE_PIC_DEBUG  - set to anything to enable debug
       CONVERT_OPTS         - convert gifify opts (default $CONVERT_OPTS)
 
    Primitive types are shown in main program help below,
@@ -89,7 +91,7 @@ HELP
 }
 
 let skip=0
-while getopts ":hvxi:o:d:n:m:l:g:z:" opt; do
+while getopts ":hvxi:o:d:n:m:l:g:z:V:" opt; do
     case "$opt" in
     h)
 		show_help
@@ -135,6 +137,10 @@ while getopts ":hvxi:o:d:n:m:l:g:z:" opt; do
 	z)
 		resize=$OPTARG
 		debug "Setting resize=$resize"
+		;;
+	V)
+		viewer=$OPTARG
+		debug "Setting viewer=$viewer"
 		;;
 	x)
 		exif=exiftool
@@ -209,7 +215,9 @@ if [ -n "$loop_num0" -a -n "$loop_num1" -a -n "$loop_inc" ]; then
 		fi
 	done
 	if [ -n "$gifify" -a -n "$cvt" ]; then
+		cd $wdir
 		run $cvt $CONVERT_OPTS $files_asc $files_desc $gifify
+		cd -
 	fi
 else
 	# create output from input if not given
