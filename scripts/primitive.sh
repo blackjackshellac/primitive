@@ -3,7 +3,7 @@
 # primitive front-end bash script
 #
 
-PRIMITIVE_PIC_BIN=${PRIMITIVE_PIC_BIN:=~/gocode/bin/primitive}
+PRIMITIVE_PIC_BIN=${PRIMITIVE_PIC_BIN:=~/go/bin/primitive}
 
 # A POSIX variable
 OPTIND=1         # Reset in case getopts has been used previously in the shell.
@@ -206,7 +206,7 @@ if [ -n "$loop_num0" -a -n "$loop_num1" -a -n "$loop_inc" ]; then
 			warn "Skipping existing file: $output"
 		else
 			debug "Processing $output"
-			run ~/gocode/bin/primitive $verbose -i "$input" -o "$output" -n $num -m $primitive $leftovers
+			run ${PRIMITIVE_PIC_BIN} $verbose -i "$input" -o "$output" -n $num -m $primitive $leftovers
 		fi
 		files_asc="$files_asc $output"
 		files_desc="$output $files_desc"
@@ -223,9 +223,9 @@ else
 	# create output from input if not given
 	[ -z "$output" ] && make_output $num
 
-	#~/gocode/bin/primitive -i /data/photos/steeve/nexus_5/DCIM/Camera/IMG_20170610_122050.jpg -o scenery_1000.jpg -m 1 -n 1000
-	cmd="~/gocode/bin/primitive $verbose -i \"$input\" -o \"$output\" -n $num -m $primitive $leftovers"
-	run ~/gocode/bin/primitive $verbose -i "$input" -o "$output" -n $num -m $primitive $leftovers
+	#${PRIMITIVE_PIC_BIN} -i /data/photos/steeve/nexus_5/DCIM/Camera/IMG_20170610_122050.jpg -o scenery_1000.jpg -m 1 -n 1000
+	cmd="${PRIMITIVE_PIC_BIN} $verbose -i \"$input\" -o \"$output\" -n $num -m $primitive $leftovers"
+	run ${PRIMITIVE_PIC_BIN} $verbose -i "$input" -o "$output" -n $num -m $primitive $leftovers
 
 	[ ! -z "$exif" ]   && run exiftool -TagsFromFile "$input" "$output"
 	[ ! -z "$viewer" ] && run $viewer "$output"
